@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
+import subprocess
 import sys
 from datetime import datetime, date, time, timedelta
-import os
 
 stream_url = "mms://wmlive-acl.bbc.co.uk/wms/bbc_ami/radio4/radio4_bb_live_ep1_sl0"
 # Or vlc = "/usr/bin/vlc" or wherever
@@ -37,8 +37,8 @@ def nextEpisode():
     print "Making next %d seconds last for %d seconds" % (secondsFromNow(nextep), secondsFromNow(nextep) + (nextep['duration'] * 60))
     runtime = (secondsFromNow(nextep) + (nextep['duration'] * 60))
     playspeed = secondsFromNow(nextep) / runtime
-    execstr = vlc + " " + vlcdefopts + " --rate="+str(playspeed) + " --run-time="+str(int(runtime)) + " " + stream_url + " vlc://quit"
-    os.system(execstr)
+    execstr = [ vlc, vlcdefopts, "--rate="+str(playspeed), "--run-time="+str(int(runtime)), stream_url, "vlc://quit" ]
+    subprocess.call(execstr)
 
 def main():
     while(True):

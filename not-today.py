@@ -9,18 +9,14 @@ vlc = "/usr/bin/vlc"
 vlcdefopts = "--intf=dummy"
 
 schedule = [
-    {'day':6, 'time':"19:02", 'duration':12.5}, # Sunday
-    {'day':0, 'time':"14:02", 'duration':12.5}, # Monday repeat
-    {'day':0, 'time':"19:02", 'duration':12.5}, # Monday
-    {'day':1, 'time':"14:02", 'duration':12.5}, # Tuesday repeat
-    {'day':1, 'time':"19:02", 'duration':12.5}, # Tuesday
-    {'day':2, 'time':"14:02", 'duration':12.5}, # Wednesday repeat
-    {'day':2, 'time':"19:02", 'duration':12.5}, # Wednesday
-    {'day':3, 'time':"14:02", 'duration':12.5}, # Thursday repeat
-    {'day':3, 'time':"19:02", 'duration':12.5}, # Thursday
-    {'day':4, 'time':"14:02", 'duration':12.5}, # Friday repeat
-    {'day':4, 'time':"19:02", 'duration':12.5}, # Friday
-    {'day':6, 'time':"10:00", 'duration':75.0}  # Sunday bloody omnibus
+    # Monday to Friday
+    { 'day':0, 'time':"06:00", 'duration':180 },
+    { 'day':1, 'time':"06:00", 'duration':180 },
+    { 'day':2, 'time':"06:00", 'duration':180 },
+    { 'day':3, 'time':"06:00", 'duration':180 },
+    { 'day':4, 'time':"06:00", 'duration':180 },
+    # Saturday
+    { 'day':5, 'time':"07:00", 'duration':120 },
 ]
 
 def secondsFromNow(ep):

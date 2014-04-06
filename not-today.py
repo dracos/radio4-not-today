@@ -2,6 +2,8 @@
 
 import subprocess
 import sys
+import urllib2
+import json
 from datetime import datetime, date, time, timedelta
 
 stream_url = "mms://wmlive-acl.bbc.co.uk/wms/bbc_ami/radio4/radio4_bb_live_ep1_sl0"
@@ -9,33 +11,31 @@ stream_url = "mms://wmlive-acl.bbc.co.uk/wms/bbc_ami/radio4/radio4_bb_live_ep1_s
 vlc = "/Applications/VLC.app/Contents/MacOS/VLC"
 vlcdefopts = "--intf=dummy"
 
-schedule = [
-    # Monday to Friday
-    { 'day':0, 'time':"06:00", 'duration':180 },
-    { 'day':1, 'time':"06:00", 'duration':180 },
-    { 'day':2, 'time':"06:00", 'duration':180 },
-    { 'day':3, 'time':"06:00", 'duration':180 },
-    { 'day':4, 'time':"06:00", 'duration':180 },
-    # Saturday
-    { 'day':5, 'time':"07:00", 'duration':120 },
-]
+# The programme id of the today programme
+pid = "b006qj9z"
+
 
 def secondsFromNow(ep):
-    now = datetime.now()
-    daysfromnow = (ep['day'] - now.weekday()) % 7
-    eptime = datetime.combine(now.date(), datetime.strptime(ep['time'], "%H:%M").time()) + timedelta(days=daysfromnow)
-    secondsfromnow = (eptime - now).total_seconds()
-    if (secondsfromnow < 0): # Today's episode already passed
-        secondsfromnow = secondsfromnow + timedelta(weeks=1).total_seconds() 
-    return secondsfromnow
+    try:
+        starttime = datetime.strptime(ep['start'], '%Y-%m-%dT%H:%M:%SZ')
+    except:
+        starttime = datetime.strptime(ep['start'], '%Y-%m-%dT%H:%M:%S+01:00') - timedelta(hours=1)
+    now = datetime.utcnow()
+    delta = starttime - now
+    return delta.seconds
 
 def nextEpisode():
-    nextep = schedule[0]
-    for ep in schedule:
-        if (secondsFromNow(ep) < secondsFromNow(nextep)):
-            nextep = ep
-    print "Making next %d seconds last for %d seconds" % (secondsFromNow(nextep), secondsFromNow(nextep) + (nextep['duration'] * 60))
-    runtime = (secondsFromNow(nextep) + (nextep['duration'] * 60))
+    response = urllib2.urlopen('http://www.bbc.co.uk/programmes/' + pid + '/episodes/upcoming.json')
+    data = json.load(response)
+
+    # This code assumes that the list of upcoming broadcasts will not be empty.
+    # On a side note, Trident nuclear submarines have instructions to launch
+    # their missiles in the event of the Today programme not being broadcast.
+    # Therefore the failure of this script to execute may be a precursor to
+    # nuclear armageddon.
+    nextep = data['broadcasts'][0]
+    print "Making next %d seconds last for %d seconds" % (secondsFromNow(nextep), secondsFromNow(nextep) + nextep['duration'])
+    runtime = float(secondsFromNow(nextep) + nextep['duration'])
     playspeed = secondsFromNow(nextep) / runtime
     execstr = [ vlc, vlcdefopts, "--rate="+str(playspeed), "--run-time="+str(int(runtime)), stream_url, "vlc://quit" ]
     subprocess.call(execstr)

@@ -5,7 +5,8 @@ from datetime import datetime, date, time, timedelta
 import os
 
 stream_url = "mms://wmlive-acl.bbc.co.uk/wms/bbc_ami/radio4/radio4_bb_live_ep1_sl0"
-vlc = "/usr/bin/vlc"
+# Or vlc = "/usr/bin/vlc" or wherever
+vlc = "/Applications/VLC.app/Contents/MacOS/VLC"
 vlcdefopts = "--intf=dummy"
 
 schedule = [

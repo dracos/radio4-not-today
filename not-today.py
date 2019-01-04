@@ -6,7 +6,8 @@ import urllib2
 import json
 from datetime import datetime, date, time, timedelta
 
-stream_url = "mms://wmlive-acl.bbc.co.uk/wms/bbc_ami/radio4/radio4_bb_live_ep1_sl0"
+version = 'sbr_high'
+stream_url = "http://a.files.bbci.co.uk/media/live/manifesto/audio/simulcast/hls/uk/%s/ak/bbc_radio_fourfm.m3u8" % version
 # Or vlc = "/usr/bin/vlc" or wherever
 vlc = "/Applications/VLC.app/Contents/MacOS/VLC"
 vlcdefopts = "--intf=dummy"
